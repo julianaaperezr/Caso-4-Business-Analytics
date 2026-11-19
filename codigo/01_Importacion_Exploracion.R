@@ -365,3 +365,35 @@ nrow(entrenamiento)
 nrow(prueba)
 table(entrenamiento$Churn)
 table(prueba$Churn)
+
+#2do commit
+
+# Construir el modelo de regresión logística completo
+modelo_completo <- glm(
+  Churn ~ Edad + CHI_inicial + CHI_cambio +
+    Soporte_inicial + Soporte_cambio +
+    Prioridad_inicial + Prioridad_cambio +
+    Logins_cambio + Articulos_cambio +
+    Views_cambio + Dias_cambio,
+  data = entrenamiento,
+  family = binomial
+)
+
+# Mostrar los resultados del modelo completo
+summary(modelo_completo)
+
+# Seleccionar las variables mediante el criterio AIC
+modelo_seleccionado <- step(
+  modelo_completo,
+  direction = "both",
+  trace = 0
+)
+
+# Mostrar los resultados del modelo seleccionado
+summary(modelo_seleccionado)
+
+# Comparar el AIC de los dos modelos
+AIC(modelo_completo, modelo_seleccionado)
+
+# Revisar las variables que quedaron seleccionadas
+formula(modelo_seleccionado)
