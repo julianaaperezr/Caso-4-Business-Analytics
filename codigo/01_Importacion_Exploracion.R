@@ -319,3 +319,49 @@ ggplot(QWE, aes(
 
 # Revisar valores faltantes por variable
 colSums(is.na(QWE))
+
+# PARTE 2 - MODELOS PREDICTIVOS
+
+# Crear una copia de la base para los modelos
+datos_modelo <- QWE
+
+# Cambiar nombres de variables para facilitar el análisis
+names(datos_modelo) <- c(
+  "ID", "Edad", "Churn", "CHI_inicial",
+  "CHI_cambio", "Soporte_inicial",
+  "Soporte_cambio", "Prioridad_inicial",
+  "Prioridad_cambio", "Logins_cambio",
+  "Articulos_cambio", "Views_cambio",
+  "Dias_cambio"
+)
+
+# Conservar clientes con abandono conocido
+datos_modelo <- datos_modelo %>%
+  filter(!is.na(Churn))
+
+# Dividir la base en entrenamiento y prueba
+set.seed(123)
+
+# Seleccionar el 70% de los clientes para entrenamiento
+filas <- sample(1:nrow(datos_modelo),
+                size = floor(0.70 * nrow(datos_modelo)))
+
+# Crear los dos conjuntos de datos
+entrenamiento <- datos_modelo[filas, ]
+prueba <- datos_modelo[-filas, ]
+
+# Identificar variables explicativas
+variables <- setdiff(names(datos_modelo), c("ID", "Churn"))
+
+# Completar valores faltantes usando medianas del entrenamiento
+for (variable in variables) {
+  mediana <- median(entrenamiento[[variable]], na.rm = TRUE)
+  entrenamiento[[variable]][is.na(entrenamiento[[variable]])] <- mediana
+  prueba[[variable]][is.na(prueba[[variable]])] <- mediana
+}
+
+# Verificar los datos
+nrow(entrenamiento)
+nrow(prueba)
+table(entrenamiento$Churn)
+table(prueba$Churn)
