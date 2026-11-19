@@ -397,3 +397,58 @@ AIC(modelo_completo, modelo_seleccionado)
 
 # Revisar las variables que quedaron seleccionadas
 formula(modelo_seleccionado)
+
+#INTERPRETACIÓN DE COEFICIENTES
+
+# Obtener los coeficientes del modelo seleccionado
+coeficientes <- coef(modelo_seleccionado)
+
+# Mostrar los coeficientes beta
+coeficientes
+
+# Calcular los odds ratios
+odds_ratios <- exp(coeficientes)
+
+# Mostrar los odds ratios
+odds_ratios
+
+# Crear una tabla con los resultados
+tabla_coeficientes <- data.frame(
+  Variable = names(coeficientes),
+  Beta = round(as.numeric(coeficientes), 5),
+  Odds_Ratio = round(as.numeric(odds_ratios), 5)
+)
+
+# Mostrar la tabla de coeficientes
+View(tabla_coeficientes)
+
+# Calcular el cambio porcentual en los odds
+tabla_coeficientes$Cambio_porcentual <- round(
+  (exp(coeficientes) - 1) * 100, 2
+)
+
+# Mostrar la tabla completa
+View(tabla_coeficientes)
+
+# Calcular probabilidades de abandono
+# Utilizar los clientes del conjunto de prueba
+prueba$Probabilidad <- predict(
+  modelo_seleccionado,
+  newdata = prueba,
+  type = "response"
+)
+
+# Mostrar las primeras probabilidades
+head(prueba$Probabilidad)
+
+# Resumir las probabilidades estimadas
+summary(prueba$Probabilidad)
+
+# Identificar los 100 clientes con mayor riesgo
+clientes_riesgo <- prueba %>%
+  arrange(desc(Probabilidad)) %>%
+  select(ID, Churn, Probabilidad) %>%
+  head(100)
+
+# Mostrar los clientes con mayor riesgo
+View(clientes_riesgo)
