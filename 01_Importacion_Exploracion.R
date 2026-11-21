@@ -1,0 +1,643 @@
+# CASO 4 - QWE Inc.
+# Business Analytics
+
+# Cargar librerias
+library(readxl)
+library(dplyr)
+
+# Identificar las hojas del archivo Excel
+archivo <- file.choose()
+excel_sheets(archivo)
+
+# Importar base de datos
+QWE <- read_excel(archivo, sheet = "Case Data")
+
+# Validacion inicial de la base de datos
+nrow(QWE)
+ncol(QWE)
+names(QWE)
+head(QWE)
+
+# Analisis descriptivo de la variable Churn
+# Cantidad de clientes segun abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(Clientes = n()) %>%
+  mutate(Porcentaje = round(Clientes / sum(Clientes) * 100, 2))
+
+# Porcentaje de clientes según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Porcentaje = n() / nrow(QWE) * 100
+  )
+
+# Antigüedad promedio según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Antiguedad_promedio = mean(`Customer Age (in months)`, na.rm = TRUE)
+  )
+
+# CHI promedio según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    CHI_promedio = mean(`CHI Score 0-1`, na.rm = TRUE)
+  )
+
+# Solicitudes de soporte promedio según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Soporte_promedio = mean(`Support Cases 0-1`, na.rm = TRUE)
+  )
+
+# Revisar los valores de la variable soporte
+summary(QWE$`Support Cases 0-1`)
+
+# Solicitudes de soporte iniciales según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Soporte_inicial = mean(`Support Cases Month 0`, na.rm = TRUE)
+  )
+
+# Resumen general de la base de datos
+summary(QWE)
+
+# Actividad de los clientes según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Logins_promedio = mean(`Logins 0-1`, na.rm = TRUE)
+  )
+
+# Visualizaciones promedio según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Views_promedio = mean(`Views 0-1`, na.rm = TRUE)
+  )
+
+# Tiempo desde el último ingreso según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Dias_promedio = mean(`Days Since Last Login 0-1`, na.rm = TRUE)
+  )
+
+# Tiempo desde el último ingreso según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Dias_promedio = mean(`Days Since Last Login 0-1`, na.rm = TRUE)
+  )
+
+# Cambio promedio en artículos publicados según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Articulos_promedio = mean(`Blog Articles 0-1`, na.rm = TRUE)
+  )
+
+# Cambio en la prioridad del soporte según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Prioridad_promedio = mean(`SP 0-1`, na.rm = TRUE)
+  )
+
+# CHI inicial promedio según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    CHI_inicial = mean(`CHI Score Month 0`, na.rm = TRUE)
+  )
+
+# Prioridad inicial del soporte según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Prioridad_inicial = mean(`SP Month 0`, na.rm = TRUE)
+  )
+
+# Solicitudes iniciales de soporte según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Soporte_inicial = mean(`Support Cases Month 0`, na.rm = TRUE)
+  )
+
+# Resumen de variables según abandono
+QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Antiguedad = mean(`Customer Age (in months)`, na.rm = TRUE),
+    CHI_inicial = mean(`CHI Score Month 0`, na.rm = TRUE),
+    CHI_cambio = mean(`CHI Score 0-1`, na.rm = TRUE),
+    Soporte_inicial = mean(`Support Cases Month 0`, na.rm = TRUE),
+    Prioridad_inicial = mean(`SP Month 0`, na.rm = TRUE),
+    Logins_cambio = mean(`Logins 0-1`, na.rm = TRUE),
+    Views_cambio = mean(`Views 0-1`, na.rm = TRUE),
+    Dias_cambio = mean(`Days Since Last Login 0-1`, na.rm = TRUE),
+    Articulos_cambio = mean(`Blog Articles 0-1`, na.rm = TRUE)
+  )
+
+# Visualizar la tabla completa
+Resumen_QWE <- QWE %>%
+  group_by(`Churn (1 = Yes, 0 = No)`) %>%
+  summarise(
+    Clientes = n(),
+    Antiguedad = mean(`Customer Age (in months)`, na.rm = TRUE),
+    CHI_inicial = mean(`CHI Score Month 0`, na.rm = TRUE),
+    CHI_cambio = mean(`CHI Score 0-1`, na.rm = TRUE),
+    Soporte_inicial = mean(`Support Cases Month 0`, na.rm = TRUE),
+    Prioridad_inicial = mean(`SP Month 0`, na.rm = TRUE),
+    Logins_cambio = mean(`Logins 0-1`, na.rm = TRUE),
+    Views_cambio = mean(`Views 0-1`, na.rm = TRUE),
+    Dias_cambio = mean(`Days Since Last Login 0-1`, na.rm = TRUE),
+    Articulos_cambio = mean(`Blog Articles 0-1`, na.rm = TRUE)
+  )
+
+View(Resumen_QWE)
+
+# Distribución de clientes según abandono
+library(ggplot2)
+
+ggplot(QWE, aes(x = factor(`Churn (1 = Yes, 0 = No)`))) +
+  geom_bar(fill = "steelblue") +
+  labs(
+    title = "Distribución de clientes según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "Número de clientes"
+  ) +
+  theme_minimal()
+
+# CHI inicial según abandono
+ggplot(QWE, aes(
+  x = factor(`Churn (1 = Yes, 0 = No)`),
+  y = `CHI Score Month 0`
+)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "CHI inicial según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "CHI inicial"
+  ) +
+  theme_minimal()
+
+# Actividad de los clientes según abandono
+ggplot(QWE, aes(
+  x = factor(`Churn (1 = Yes, 0 = No)`),
+  y = `Logins 0-1`
+)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Actividad de los clientes según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "Cambio en logins"
+  ) +
+  theme_minimal()
+
+# Cambio en visualizaciones según abandono
+ggplot(QWE, aes(
+  x = factor(`Churn (1 = Yes, 0 = No)`),
+  y = `Views 0-1`
+)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Cambio en visualizaciones según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "Cambio en visualizaciones"
+  ) +
+  theme_minimal()
+
+# Cambio en días desde el último ingreso según abandono
+ggplot(QWE, aes(
+  x = factor(`Churn (1 = Yes, 0 = No)`),
+  y = `Days Since Last Login 0-1`
+)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Cambio en días desde el último ingreso según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "Cambio en días desde el último ingreso"
+  ) +
+  theme_minimal()
+
+# Cambio en artículos publicados según abandono
+ggplot(QWE, aes(
+  x = factor(`Churn (1 = Yes, 0 = No)`),
+  y = `Blog Articles 0-1`
+)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Cambio en artículos publicados según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "Cambio en artículos publicados"
+  ) +
+  theme_minimal()
+
+# Antigüedad de los clientes según abandono
+ggplot(QWE, aes(
+  x = factor(`Churn (1 = Yes, 0 = No)`),
+  y = `Customer Age (in months)`
+)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Antigüedad de los clientes según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "Antigüedad en meses"
+  ) +
+  theme_minimal()
+
+# Cambio en el indicador CHI según abandono
+ggplot(QWE, aes(
+  x = factor(`Churn (1 = Yes, 0 = No)`),
+  y = `CHI Score 0-1`
+)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Cambio en el indicador CHI según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "Cambio en CHI"
+  ) +
+  theme_minimal()
+
+# Solicitudes iniciales de soporte según abandono
+ggplot(QWE, aes(
+  x = factor(`Churn (1 = Yes, 0 = No)`),
+  y = `Support Cases Month 0`
+)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Solicitudes iniciales de soporte según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "Solicitudes iniciales de soporte"
+  ) +
+  theme_minimal()
+
+# Prioridad inicial del soporte según abandono
+ggplot(QWE, aes(
+  x = factor(`Churn (1 = Yes, 0 = No)`),
+  y = `SP Month 0`
+)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Prioridad inicial del soporte según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "Prioridad inicial del soporte"
+  ) +
+  theme_minimal()
+
+# Cambio en la prioridad del soporte según abandono
+ggplot(QWE, aes(
+  x = factor(`Churn (1 = Yes, 0 = No)`),
+  y = `SP 0-1`
+)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Cambio en la prioridad del soporte según abandono",
+    x = "Estado del cliente (0 = Permanece, 1 = Abandona)",
+    y = "Cambio en la prioridad del soporte"
+  ) +
+  theme_minimal()
+
+# Revisar valores faltantes por variable
+colSums(is.na(QWE))
+
+# PARTE 2 - MODELOS PREDICTIVOS
+
+# Crear una copia de la base para los modelos
+datos_modelo <- QWE
+
+# Cambiar nombres de variables para facilitar el análisis
+names(datos_modelo) <- c(
+  "ID", "Edad", "Churn", "CHI_inicial",
+  "CHI_cambio", "Soporte_inicial",
+  "Soporte_cambio", "Prioridad_inicial",
+  "Prioridad_cambio", "Logins_cambio",
+  "Articulos_cambio", "Views_cambio",
+  "Dias_cambio"
+)
+
+# Conservar clientes con abandono conocido
+datos_modelo <- datos_modelo %>%
+  filter(!is.na(Churn))
+
+# Dividir la base en entrenamiento y prueba
+set.seed(123)
+
+# Seleccionar el 70% de los clientes para entrenamiento
+filas <- sample(1:nrow(datos_modelo),
+                size = floor(0.70 * nrow(datos_modelo)))
+
+# Crear los dos conjuntos de datos
+entrenamiento <- datos_modelo[filas, ]
+prueba <- datos_modelo[-filas, ]
+
+# Identificar variables explicativas
+variables <- setdiff(names(datos_modelo), c("ID", "Churn"))
+
+# Completar valores faltantes usando medianas del entrenamiento
+for (variable in variables) {
+  mediana <- median(entrenamiento[[variable]], na.rm = TRUE)
+  entrenamiento[[variable]][is.na(entrenamiento[[variable]])] <- mediana
+  prueba[[variable]][is.na(prueba[[variable]])] <- mediana
+}
+
+# Verificar los datos
+nrow(entrenamiento)
+nrow(prueba)
+table(entrenamiento$Churn)
+table(prueba$Churn)
+
+#2do commit
+
+# Construir el modelo de regresión logística completo
+modelo_completo <- glm(
+  Churn ~ Edad + CHI_inicial + CHI_cambio +
+    Soporte_inicial + Soporte_cambio +
+    Prioridad_inicial + Prioridad_cambio +
+    Logins_cambio + Articulos_cambio +
+    Views_cambio + Dias_cambio,
+  data = entrenamiento,
+  family = binomial
+)
+
+# Mostrar los resultados del modelo completo
+summary(modelo_completo)
+
+# Seleccionar las variables mediante el criterio AIC
+modelo_seleccionado <- step(
+  modelo_completo,
+  direction = "both",
+  trace = 0
+)
+
+# Mostrar los resultados del modelo seleccionado
+summary(modelo_seleccionado)
+
+# Comparar el AIC de los dos modelos
+AIC(modelo_completo, modelo_seleccionado)
+
+# Revisar las variables que quedaron seleccionadas
+formula(modelo_seleccionado)
+
+#INTERPRETACIÓN DE COEFICIENTES
+
+# Obtener los coeficientes del modelo seleccionado
+coeficientes <- coef(modelo_seleccionado)
+
+# Mostrar los coeficientes beta
+coeficientes
+
+# Calcular los odds ratios
+odds_ratios <- exp(coeficientes)
+
+# Mostrar los odds ratios
+odds_ratios
+
+# Crear una tabla con los resultados
+tabla_coeficientes <- data.frame(
+  Variable = names(coeficientes),
+  Beta = round(as.numeric(coeficientes), 5),
+  Odds_Ratio = round(as.numeric(odds_ratios), 5)
+)
+
+# Mostrar la tabla de coeficientes
+View(tabla_coeficientes)
+
+# Calcular el cambio porcentual en los odds
+tabla_coeficientes$Cambio_porcentual <- round(
+  (exp(coeficientes) - 1) * 100, 2
+)
+
+# Mostrar la tabla completa
+View(tabla_coeficientes)
+
+# Calcular probabilidades de abandono
+# Utilizar los clientes del conjunto de prueba
+prueba$Probabilidad <- predict(
+  modelo_seleccionado,
+  newdata = prueba,
+  type = "response"
+)
+
+# Mostrar las primeras probabilidades
+head(prueba$Probabilidad)
+
+# Resumir las probabilidades estimadas
+summary(prueba$Probabilidad)
+
+# Identificar los 100 clientes con mayor riesgo
+clientes_riesgo <- prueba %>%
+  arrange(desc(Probabilidad)) %>%
+  select(ID, Churn, Probabilidad) %>%
+  head(100)
+
+# Mostrar los clientes con mayor riesgo
+View(clientes_riesgo)
+
+
+# PARTE 3 - EVALUACIÓN DE MODELOS
+
+
+# Calcular probabilidades con el modelo completo
+prueba$Prob_Completo <- predict(
+  modelo_completo,
+  newdata = prueba,
+  type = "response"
+)
+
+# Calcular probabilidades con el modelo seleccionado
+prueba$Prob_Seleccionado <- predict(
+  modelo_seleccionado,
+  newdata = prueba,
+  type = "response"
+)
+
+# Clasificar clientes usando el umbral de 0.50
+# 1 significa abandona y 0 significa permanece
+prueba$Pred_Completo <- ifelse(
+  prueba$Prob_Completo >= 0.50, 1, 0
+)
+
+# Clasificar clientes con el modelo seleccionado
+prueba$Pred_Seleccionado <- ifelse(
+  prueba$Prob_Seleccionado >= 0.50, 1, 0
+)
+
+# Crear matriz de confusión del modelo completo
+matriz_completo <- table(
+  Real = prueba$Churn,
+  Predicho = prueba$Pred_Completo
+)
+
+# Mostrar matriz del modelo completo
+matriz_completo
+
+# Crear matriz de confusión del modelo seleccionado
+matriz_seleccionado <- table(
+  Real = prueba$Churn,
+  Predicho = prueba$Pred_Seleccionado
+)
+
+# Mostrar matriz del modelo seleccionado
+matriz_seleccionado
+
+
+# COMPARACIÓN DE RESULTADOS
+
+
+# Crear una función para calcular los indicadores
+evaluar_modelo <- function(real, predicho, probabilidad) {
+  
+  # Contar los aciertos y errores
+  VP <- sum(real == 1 & predicho == 1)
+  VN <- sum(real == 0 & predicho == 0)
+  FP <- sum(real == 0 & predicho == 1)
+  FN <- sum(real == 1 & predicho == 0)
+  
+  # Calcular exactitud
+  exactitud <- (VP + VN) / length(real)
+  
+  # Calcular precisión
+  precision <- ifelse(VP + FP == 0, NA,
+                      VP / (VP + FP))
+  
+  # Calcular sensibilidad
+  sensibilidad <- ifelse(VP + FN == 0, NA,
+                         VP / (VP + FN))
+  
+  # Calcular especificidad
+  especificidad <- ifelse(VN + FP == 0, NA,
+                          VN / (VN + FP))
+  
+  # Calcular error de probabilidades
+  brier <- mean((probabilidad - real)^2)
+  
+  # Reunir los resultados
+  return(c(
+    Exactitud = exactitud,
+    Precision = precision,
+    Sensibilidad = sensibilidad,
+    Especificidad = especificidad,
+    Brier = brier
+  ))
+}
+
+# Evaluar el modelo completo
+resultado_completo <- evaluar_modelo(
+  prueba$Churn,
+  prueba$Pred_Completo,
+  prueba$Prob_Completo
+)
+
+# Evaluar el modelo seleccionado
+resultado_seleccionado <- evaluar_modelo(
+  prueba$Churn,
+  prueba$Pred_Seleccionado,
+  prueba$Prob_Seleccionado
+)
+
+# Crear tabla comparativa
+comparacion <- data.frame(
+  Modelo = c("Completo", "Seleccionado"),
+  rbind(resultado_completo, resultado_seleccionado)
+)
+
+# Redondear los indicadores
+comparacion[, 2:6] <- round(comparacion[, 2:6], 4)
+
+# Mostrar la comparación
+View(comparacion)
+
+# Mostrar los resultados en consola
+comparacion
+
+
+# COMPARACIÓN DE RESULTADOS
+
+
+# Crear una función para calcular los indicadores
+evaluar_modelo <- function(real, predicho, probabilidad) {
+  
+  # Contar los aciertos y errores
+  VP <- sum(real == 1 & predicho == 1)
+  VN <- sum(real == 0 & predicho == 0)
+  FP <- sum(real == 0 & predicho == 1)
+  FN <- sum(real == 1 & predicho == 0)
+  
+  # Calcular exactitud
+  exactitud <- (VP + VN) / length(real)
+  
+  # Calcular precisión
+  precision <- ifelse(VP + FP == 0, NA,
+                      VP / (VP + FP))
+  
+  # Calcular sensibilidad
+  sensibilidad <- ifelse(VP + FN == 0, NA,
+                         VP / (VP + FN))
+  
+  # Calcular especificidad
+  especificidad <- ifelse(VN + FP == 0, NA,
+                          VN / (VN + FP))
+  
+  # Calcular error de probabilidades
+  brier <- mean((probabilidad - real)^2)
+  
+  # Reunir los resultados
+  return(c(
+    Exactitud = exactitud,
+    Precision = precision,
+    Sensibilidad = sensibilidad,
+    Especificidad = especificidad,
+    Brier = brier
+  ))
+}
+
+# Evaluar el modelo completo
+resultado_completo <- evaluar_modelo(
+  prueba$Churn,
+  prueba$Pred_Completo,
+  prueba$Prob_Completo
+)
+
+# Evaluar el modelo seleccionado
+resultado_seleccionado <- evaluar_modelo(
+  prueba$Churn,
+  prueba$Pred_Seleccionado,
+  prueba$Prob_Seleccionado
+)
+
+# Crear tabla comparativa
+comparacion <- data.frame(
+  Modelo = c("Completo", "Seleccionado"),
+  rbind(resultado_completo, resultado_seleccionado)
+)
+
+# Redondear los indicadores
+comparacion[, 2:6] <- round(comparacion[, 2:6], 4)
+
+# Mostrar la comparación
+View(comparacion)
+
+# Mostrar los resultados en consola
+comparacion
