@@ -501,3 +501,73 @@ matriz_seleccionado <- table(
 
 # Mostrar matriz del modelo seleccionado
 matriz_seleccionado
+
+
+# COMPARACIÓN DE RESULTADOS
+
+
+# Crear una función para calcular los indicadores
+evaluar_modelo <- function(real, predicho, probabilidad) {
+  
+  # Contar los aciertos y errores
+  VP <- sum(real == 1 & predicho == 1)
+  VN <- sum(real == 0 & predicho == 0)
+  FP <- sum(real == 0 & predicho == 1)
+  FN <- sum(real == 1 & predicho == 0)
+  
+  # Calcular exactitud
+  exactitud <- (VP + VN) / length(real)
+  
+  # Calcular precisión
+  precision <- ifelse(VP + FP == 0, NA,
+                      VP / (VP + FP))
+  
+  # Calcular sensibilidad
+  sensibilidad <- ifelse(VP + FN == 0, NA,
+                         VP / (VP + FN))
+  
+  # Calcular especificidad
+  especificidad <- ifelse(VN + FP == 0, NA,
+                          VN / (VN + FP))
+  
+  # Calcular error de probabilidades
+  brier <- mean((probabilidad - real)^2)
+  
+  # Reunir los resultados
+  return(c(
+    Exactitud = exactitud,
+    Precision = precision,
+    Sensibilidad = sensibilidad,
+    Especificidad = especificidad,
+    Brier = brier
+  ))
+}
+
+# Evaluar el modelo completo
+resultado_completo <- evaluar_modelo(
+  prueba$Churn,
+  prueba$Pred_Completo,
+  prueba$Prob_Completo
+)
+
+# Evaluar el modelo seleccionado
+resultado_seleccionado <- evaluar_modelo(
+  prueba$Churn,
+  prueba$Pred_Seleccionado,
+  prueba$Prob_Seleccionado
+)
+
+# Crear tabla comparativa
+comparacion <- data.frame(
+  Modelo = c("Completo", "Seleccionado"),
+  rbind(resultado_completo, resultado_seleccionado)
+)
+
+# Redondear los indicadores
+comparacion[, 2:6] <- round(comparacion[, 2:6], 4)
+
+# Mostrar la comparación
+View(comparacion)
+
+# Mostrar los resultados en consola
+comparacion
