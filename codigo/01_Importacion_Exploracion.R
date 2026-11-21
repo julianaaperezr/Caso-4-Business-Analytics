@@ -1,27 +1,29 @@
 # CASO 4 - QWE Inc.
 # Business Analytics
 
-# Cargar librerías
+# Cargar librerias
 library(readxl)
 library(dplyr)
 
 # Identificar las hojas del archivo Excel
-excel_sheets("datos/DATA.xlsx")
+archivo <- file.choose()
+excel_sheets(archivo)
 
 # Importar base de datos
-QWE <- read_excel("datos/DATA.xlsx", sheet = "Case Data")
+QWE <- read_excel(archivo, sheet = "Case Data")
 
-# Validación inicial de la base de datos
+# Validacion inicial de la base de datos
 nrow(QWE)
 ncol(QWE)
 names(QWE)
 head(QWE)
 
-# Análisis descriptivo de la variable Churn
-# Cantidad de clientes según abandono
+# Analisis descriptivo de la variable Churn
+# Cantidad de clientes segun abandono
 QWE %>%
   group_by(`Churn (1 = Yes, 0 = No)`) %>%
-  summarise(Clientes = n())
+  summarise(Clientes = n()) %>%
+  mutate(Porcentaje = round(Clientes / sum(Clientes) * 100, 2))
 
 # Porcentaje de clientes según abandono
 QWE %>%
@@ -452,3 +454,50 @@ clientes_riesgo <- prueba %>%
 
 # Mostrar los clientes con mayor riesgo
 View(clientes_riesgo)
+
+
+# PARTE 3 - EVALUACIÓN DE MODELOS
+
+
+# Calcular probabilidades con el modelo completo
+prueba$Prob_Completo <- predict(
+  modelo_completo,
+  newdata = prueba,
+  type = "response"
+)
+
+# Calcular probabilidades con el modelo seleccionado
+prueba$Prob_Seleccionado <- predict(
+  modelo_seleccionado,
+  newdata = prueba,
+  type = "response"
+)
+
+# Clasificar clientes usando el umbral de 0.50
+# 1 significa abandona y 0 significa permanece
+prueba$Pred_Completo <- ifelse(
+  prueba$Prob_Completo >= 0.50, 1, 0
+)
+
+# Clasificar clientes con el modelo seleccionado
+prueba$Pred_Seleccionado <- ifelse(
+  prueba$Prob_Seleccionado >= 0.50, 1, 0
+)
+
+# Crear matriz de confusión del modelo completo
+matriz_completo <- table(
+  Real = prueba$Churn,
+  Predicho = prueba$Pred_Completo
+)
+
+# Mostrar matriz del modelo completo
+matriz_completo
+
+# Crear matriz de confusión del modelo seleccionado
+matriz_seleccionado <- table(
+  Real = prueba$Churn,
+  Predicho = prueba$Pred_Seleccionado
+)
+
+# Mostrar matriz del modelo seleccionado
+matriz_seleccionado
